@@ -30,7 +30,7 @@ public class RunMe {
 		
 		Scanner io= new Scanner(System.in);
 		
-		// To test unify method
+		// To test the .unifiesWith method
 //		Predicate p = a.programRules.rules().get(0).conclusions.get(0);
 //		Predicate f =  a.programRules.rules().get(1).conclusions.get(0);
 //		System.out.println(p.toString() + " " + f.toString());
