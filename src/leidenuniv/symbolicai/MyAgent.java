@@ -11,6 +11,7 @@ import leidenuniv.symbolicai.logic.Term;
 
 public class MyAgent extends Agent {
 	
+	
 	@Override
 	public KB forwardChain(KB kb) {
 		//This method should perform a forward chaining on the kb given as argument, until no new facts are added to the KB.
@@ -44,7 +45,43 @@ public class MyAgent extends Agent {
 		//Please note because f is bound and p potentially contains the variables, unifiesWith is NOT symmetrical
 		//So: unifiesWith("human(X)","human(joost)") returns X=joost, while unifiesWith("human(joost)","human(X)") returns null 
 		//If no subst is found it returns null
-		return null;
+		
+		// Check whether there are any variables in the 2nd predicate
+		for (Term term: f.getTerms()) {
+			if (term.var) {
+				return null;
+			}
+		}
+		
+		// Check whether the predicates have the same amount of terms
+		// and whether there are the same predicates (the names are equal)
+		if ((p.getTerms().size() != f.getTerms().size()) ||
+				(p.getName() == f.getName())) {
+			return null;
+		}
+		else {
+			HashMap<String, String> substitution = new HashMap<String, String>();
+			for (int i=0; i<p.getTerms().size(); i++) {
+				Term pTerm = p.getTerm(i);
+				Term fTerm = f.getTerm(i);
+				
+				if (pTerm.var) {
+					if ((substitution.containsKey(pTerm.toString())) &&
+							(substitution.get(pTerm.toString()) != fTerm.toString())) {
+						return null;
+					}
+					else {
+						substitution.put(pTerm.toString(), fTerm.toString());
+					}
+				}
+				else {
+					if (!pTerm.toString().equals(fTerm.toString())) {
+						return null;
+					}
+				}
+			}
+			return substitution;
+		}
 	}
 
 	@Override
@@ -52,7 +89,12 @@ public class MyAgent extends Agent {
 		// Substitutes all variable terms in predicate <old> for values in substitution <s>
 		//(only if a key is present in s matching the variable name of course)
 		//Use Term.substitute(s)
-		return null;
+		
+		for (Term term: old.getTerms()) {
+			term.substitute(s);
+		}
+		
+		return old;
 	}
 
 	@Override

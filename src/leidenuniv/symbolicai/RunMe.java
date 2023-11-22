@@ -2,8 +2,11 @@ package leidenuniv.symbolicai;
 
 import java.io.File;
 import java.util.Scanner;
+import java.util.HashMap;
 
 import leidenuniv.symbolicai.environment.Maze;
+import leidenuniv.symbolicai.logic.Predicate;
+import leidenuniv.symbolicai.logic.Term;
 
 public class RunMe {
 	//This is our main program class
@@ -22,10 +25,18 @@ public class RunMe {
 		
 		
 		//If you need to test on a simpler file, you may use this one and comment out all the other KBs:
-		//a.loadKnowledgeBase("program", new File("data/family.txt"));
+//		a.loadKnowledgeBase("program", new File("data/family1.txt"));
 		
 		
 		Scanner io= new Scanner(System.in);
+		
+		// To test unify method
+//		Predicate p = a.programRules.rules().get(0).conclusions.get(0);
+//		Predicate f =  a.programRules.rules().get(1).conclusions.get(0);
+//		System.out.println(p.toString() + " " + f.toString());
+//		
+//		HashMap <String, String> unification = a.unifiesWith(a.programRules.rules().get(0).conclusions.get(0), a.programRules.rules().get(1).conclusions.get(0));
+//		System.out.println(unification);
 		
 		while (true) {
 			//have the agent run the sense-think-act loop.
