@@ -19,7 +19,7 @@ public abstract class Agent {
 	//boolean HUMAN_DECISION=true;//change to false if you want the decide step to make the decision rather than you (check code there)
 	//boolean DEBUG=true;
 	boolean PLAN=true;
-	boolean DEBUG=false;
+	boolean DEBUG=true;
 	boolean VERBOSE=false;
 	
 	public Agent() {

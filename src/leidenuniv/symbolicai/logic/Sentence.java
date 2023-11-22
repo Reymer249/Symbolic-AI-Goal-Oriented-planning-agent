@@ -6,7 +6,7 @@ public class Sentence {
 	//A sentence in our sfol language is a first order definite clause with one or more positive (no negation allowed) conclusion predicates
 	//and zero or more positive condition predicates.
 	//If no conditions are present, the conditions are assumed to be true. 
-	//This is a way to specify facts in your knowledeg based.
+	//This is a way to specify facts in your knowledge based.
 	//A clause (rule) is e.g., a(X)&b(joost)&c>d(X,joost), with a-c predicates in the conditions,X a variable, joost a constant, and d(X,joost) the conclusion
 	//Or: parent(peter,joost), which case this is a rule without condition, so it's conclusion is true.
 	//Conclusions must be fully bound, otherwise your forward chaining inference in Agent will become very complex!
