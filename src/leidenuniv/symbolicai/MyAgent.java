@@ -56,7 +56,7 @@ public class MyAgent extends Agent {
 		// Check whether the predicates have the same amount of terms
 		// and whether there are the same predicates (the names are equal)
 		if ((p.getTerms().size() != f.getTerms().size()) ||
-				(p.getName() == f.getName())) {
+				(p.getName() != f.getName())) {
 			return null;
 		}
 		else {
