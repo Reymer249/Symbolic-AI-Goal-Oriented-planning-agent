@@ -22,6 +22,39 @@ public class MyAgent extends Agent {
 		
 		return null;
 	}
+	
+	// Function to check whether only reserved predicates are left in the conditions
+	private boolean onlyReservedPredicatesLeft(Vector<Predicate> conditions) {
+		// counter for the number of the reserved predicates in the vector
+		int counter = 0;
+		for (Predicate condition: conditions) {
+			if (condition.eql || condition.not || condition.neg) {
+				counter++;
+			}
+		}
+		if (counter == conditions.size()) { // all predicates in the vector are reserved
+			return true;
+		}
+		else { // not all predicates are reserved
+			return false;
+		}
+	}
+	
+	// Function to check if the union is possible
+    private boolean unionIsPossible(HashMap<String, String> map1, HashMap<String, String> map2) {
+        for (HashMap.Entry<String, String> entry : map1.entrySet()) {
+            String key = entry.getKey();
+            String value1 = entry.getValue();
+            String value2 = map2.get(key);
+
+            // If the key is present in both maps and values are different, union is not possible
+            if (value2 != null && !value1.equals(value2)) {
+                return false;
+            }
+        }
+        // Union is possible
+        return true;
+    }
 
 	@Override
 	public boolean findAllSubstitions(Collection<HashMap<String, String>> allSubstitutions,
@@ -33,8 +66,59 @@ public class MyAgent extends Agent {
 		//substitution is the one we are currently building recursively.
 		//conditions is the list of conditions you  still need to find a subst for (this list shrinks the further you get in the recursion).
 		//facts is the list of predicates you need to match against (find substitutions so that a predicate form the conditions unifies with a fact)
-
-		return false;
+		
+		if (conditions.isEmpty()) { //base case: we successfully substituted for all conditions
+			allSubstitutions.add(substitution);
+		}
+		else { // recursive case: we still have conditions to find substitutions
+			Predicate condition = conditions.lastElement();
+			if (condition.eql || condition.not || condition.neg) {
+				boolean passed = false;
+				if (onlyReservedPredicatesLeft(conditions)) {
+					Predicate conditionSubst = new Predicate(condition.toString());
+					conditionSubst = substitute(conditionSubst, substitution);
+					if (conditionSubst.eql()) passed = true;
+					else if (conditionSubst.not()) passed = true;
+					else if (conditionSubst.neg) {
+						if (facts.containsKey(conditionSubst.toString()) || 
+								!facts.containsKey(conditionSubst.toString().substring(1))) {
+							passed = true;
+						}
+					}
+					
+					if (passed) {
+						Vector<Predicate> conditionsLeft = new Vector<>(conditions.subList(0, conditions.size() - 1));
+						findAllSubstitions(allSubstitutions, substitution, conditionsLeft, facts);
+					}
+				}
+				else {
+					conditions.remove(conditions.size() - 1);
+					conditions.insertElementAt(condition, 0);	
+					findAllSubstitions(allSubstitutions, substitution, conditions, facts);
+				}
+			}
+			else {
+				for (Predicate fact: facts.values()) {
+					HashMap<String, String> unification = unifiesWith(condition, fact);
+	//				System.out.println(condition);
+	//				System.out.println(fact);
+	//				System.out.println(unification);
+					if (unification != null && unionIsPossible(substitution, unification)) {
+						HashMap<String, String> newSubstitution = new HashMap<>(substitution);
+						newSubstitution.putAll(unification);
+						Vector<Predicate> conditionsLeft = new Vector<>(conditions.subList(0, conditions.size() - 1));
+						findAllSubstitions(allSubstitutions, newSubstitution, conditionsLeft, facts);
+					}
+				}
+			}
+		}
+		
+		if (!allSubstitutions.isEmpty()) {
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 
 	@Override
@@ -56,7 +140,7 @@ public class MyAgent extends Agent {
 		// Check whether the predicates have the same amount of terms
 		// and whether there are the same predicates (the names are equal)
 		if ((p.getTerms().size() != f.getTerms().size()) ||
-				(p.getName() != f.getName())) {
+				(!p.getName().equals(f.getName()))) {
 			return null;
 		}
 		else {

@@ -1,0 +1,3 @@
+!male(Y)
+parent(X,Y)
+!male(Y)
