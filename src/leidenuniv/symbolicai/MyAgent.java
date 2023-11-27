@@ -11,6 +11,23 @@ import leidenuniv.symbolicai.logic.Term;
 
 public class MyAgent extends Agent {
 	
+	private boolean isSubset(HashMap<String, Predicate> smallerMap, HashMap<String, Predicate> largerMap) {
+		for (HashMap.Entry<String, Predicate> entry: smallerMap.entrySet()) {
+			String key = entry.getKey();
+            Predicate value = entry.getValue();
+            
+            // Check if the key exists in the larger map
+            if (!largerMap.containsKey(key)) {
+                return false;
+            }
+
+            // No need to check for the corresponding value as 
+            // object will be different. However, if they output the 
+            // same string (key), it should be enough.
+		}
+		return true;
+	}
+	
 	
 	@Override
 	public KB forwardChain(KB kb) {
@@ -20,7 +37,68 @@ public class MyAgent extends Agent {
 		//These are then processed by processFacts() (which is already implemented for you)
 		//HINT: You should assume that forwardChain only allows *bound* predicates to be added to the facts list for now.
 		
-		return null;
+		boolean newFactsFound = true;
+		Vector<Sentence> rules = new Vector<Sentence>();
+		HashMap<String, Predicate> facts = new HashMap<String, Predicate>();
+		HashMap<String, Predicate> actions = new HashMap<String, Predicate>();
+		for (Sentence sentence: kb.rules()) {
+			if (sentence.conditions.isEmpty()) {
+				for (Predicate conclusion: sentence.conclusions) {
+					if (conclusion.add) {
+						actions.put(conclusion.toString(), conclusion);
+						facts.put(conclusion.toString().substring(1), conclusion);
+					}
+					else if (conclusion.isAction()) actions.put(conclusion.toString(), conclusion);
+					else facts.put(conclusion.toString(), conclusion);
+				}
+			}
+			else {
+				rules.add(sentence);
+			}
+		}
+		while (newFactsFound) {
+			HashMap<String, Predicate> newFacts = new HashMap<String, Predicate>();
+			HashMap<String, Predicate> newActions = new HashMap<String, Predicate>();
+			for (Sentence rule: rules) {
+				Collection<HashMap<String, String>> substitutions = new Vector<HashMap<String,String>>();
+				if (findAllSubstitions(substitutions, new HashMap<String,String>(), rule.conditions, facts)) {
+					for (HashMap<String, String> substitution: substitutions) {
+						for (Predicate conclusion: rule.conclusions) {
+							Predicate conclusionSubst = new Predicate(conclusion.toString());
+							conclusionSubst = substitute(conclusionSubst, substitution);
+							if (conclusionSubst.add) {
+								newActions.put(conclusionSubst.toString(), conclusionSubst);
+								newFacts.put(conclusionSubst.toString().substring(1), conclusionSubst);
+							}
+							if (conclusionSubst.isAction()) newActions.put(conclusionSubst.toString(), conclusionSubst);
+							else newFacts.put(conclusionSubst.toString(), conclusionSubst);
+						}
+					}
+				}
+			}
+			if (isSubset(newFacts, facts) && isSubset(newActions, actions)) {
+				newFactsFound = false;
+			}
+			else {
+				facts.putAll(newFacts);
+				actions.putAll(newActions);
+			}
+		}
+		
+		KB resultingKB = new KB();
+		// There is no need to add rules as they are either not bound or their conclusions
+		// are somewhere in the facts or actions already
+//		for (Sentence rule: rules) {
+//			resultingKB.add(rule);
+//		}
+		for (Predicate fact: facts.values()) {
+			if (fact.bound()) resultingKB.add(new Sentence(fact.toString()));
+		}
+		for (Predicate action: actions.values()) {
+			if (action.bound()) resultingKB.add(new Sentence(action.toString()));
+		}
+		
+		return resultingKB;
 	}
 	
 	// Function to check whether only reserved predicates are left in the conditions

@@ -6,4 +6,4 @@
 
 grab(X,K)>+hasKey(K)&-keyAt(K,X)
 open(X,K)>-lockedAt(K,X)
-goto(X,Y)>-at(X)&at(Y)&+passage(Y,X)
+goto(X,Y)>-at(X)&at(Y)

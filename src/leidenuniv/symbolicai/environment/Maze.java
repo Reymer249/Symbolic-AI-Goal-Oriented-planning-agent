@@ -123,6 +123,8 @@ public class Maze {
 		
 		Location loc=locs[agentY][agentX];
 		percepts.add(new Sentence("at("+loc.toString()+")"));
+		System.out.println("Agent is at: " + loc.toString());
+		System.out.println("This cell is " + loc.type);
 		
 		if (loc.isExit())
 			percepts.add(new Sentence("exit"));
@@ -131,7 +133,7 @@ public class Maze {
 		for (Location l: passages()) {
 			if (l.isLocked())//there is a closed door at loc
 				percepts.add(new Sentence("locked("+l.type.toLowerCase()+")"));
-			else//there is a passge to l
+			else//there is a passage to l
 				percepts.add(new Sentence("passage("+l.toString()+")"));
 		}
 		return percepts;

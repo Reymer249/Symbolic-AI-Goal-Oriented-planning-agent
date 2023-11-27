@@ -7,6 +7,6 @@
 #Add your percept rules below:
 
 at(X)>+at(X)
-passage(X)>+passage(X)
-at(X)&key(K)>keyAt(K,X)
-at(X)&locked(K)>lockedAt(K,X)
+at(X)&passage(Y)>+path(X,Y)
+at(X)&key(K)>+keyAt(K,X)
+at(X)&locked(K)>+lockedAt(K,X)
