@@ -9,5 +9,9 @@
 #Add your program rules below:
 
 at(X)&keyAt(K,X)>_grab(X,K)
+at(X)&keyAt(K,X)>*hasKey(K)
 at(X)&lockedAt(K,X)&hasKey(K)>_open(X,K)
+lockedAt(K,X)&!hasKey(K)>*hasKey(K)&*opened(X,K)
+lockedAt(X,K)&hasKey(K)>*opened(X,K)
+at(X)&path(X,Y)&!=(X,Y)&!wasAt(Y)>*at(Y)
 at(X)&path(X,Y)&!=(X,Y)>_goto(X,Y)

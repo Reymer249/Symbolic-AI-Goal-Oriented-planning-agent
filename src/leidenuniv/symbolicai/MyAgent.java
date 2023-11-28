@@ -1,5 +1,6 @@
 package leidenuniv.symbolicai;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Vector;
@@ -266,6 +267,12 @@ public class MyAgent extends Agent {
 		//Ends at maxDepth
 		//Predicate goal is the goal predicate to find a plan for.
 		//Return null if no plan is found.
+		for (int i = 1; i<=maxDepth; i++) {
+			Plan plan = depthFirst(i, 0, kb, goal, new Plan());
+			if (plan != null) {
+				return plan;
+			}
+		}
 		return null;
 	}
 
@@ -277,6 +284,37 @@ public class MyAgent extends Agent {
 		//Returns (bubbles back through recursion) the plan when the state entails the goal predicate
 		//Returns null if capped or if there are no (more) actions to perform in one node (state)
 		//HINT: make use of think() and act() using the local state for the node in the search you are in.
+		
+		if (state.contains(goal)) { // base case, we satisfied the goal
+			return partialPlan;
+		}
+		else if (depth == maxDepth) { // another base case: we reached the bottom
+			return null;
+		}
+		else {
+			Agent imaginaryAgent = new MyAgent();
+			
+			imaginaryAgent.loadKnowledgeBase("percepts", new File("data/percepts.txt"));
+			imaginaryAgent.loadKnowledgeBase("program", new File("data/program.txt"));
+			imaginaryAgent.loadKnowledgeBase("actions", new File("data/actions.txt"));
+			
+			imaginaryAgent.believes = state;
+			imaginaryAgent.desires.add(new Sentence(goal.toString()));
+			imaginaryAgent.think(imaginaryAgent.believes, imaginaryAgent.desires, imaginaryAgent.intentions);
+			
+			for (Sentence intentionSentence: imaginaryAgent.intentions.rules()) {
+				for (Predicate intention: intentionSentence.conclusions) {
+					KB newState = state.union(new KB());
+					imaginaryAgent.act(null, intention, newState, new KB());
+					Plan newPlan = new Plan(partialPlan);
+					newPlan.add(intention);
+					Plan finalPlan = depthFirst(maxDepth, depth+1, newState, goal, newPlan);
+					if (finalPlan != null) {
+						return finalPlan;
+					}
+				}
+			}
+		}
 		return null;
 	}
 }

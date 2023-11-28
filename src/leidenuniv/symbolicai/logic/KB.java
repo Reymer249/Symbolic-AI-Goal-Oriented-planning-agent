@@ -23,7 +23,7 @@ public class KB {
 		hash=new HashMap<String,Sentence>();
 		try {
 			RandomAccessFile r=new RandomAccessFile(file, "r");
-			System.out.println("Reading KB from "+file);
+			//System.out.println("Reading KB from "+file);
 			String line=r.readLine();
 			while (line!=null) {
 				line=line.trim();
@@ -31,7 +31,7 @@ public class KB {
 					//only parse non-empty, non-comment lines
 					Sentence temp=new Sentence(line);
 					add(temp);
-					System.out.println("Read sentence: "+temp);
+					//System.out.println("Read sentence: "+temp);
 					
 				}
 				line=r.readLine();
@@ -42,7 +42,7 @@ public class KB {
 			e.printStackTrace();
 			System.exit(0);
 		}
-		System.out.println("Ready reading KB.");
+		//System.out.println("Ready reading KB.");
 	}
 	public KB(Collection<Predicate> preds) {
 		rules=new Vector<Sentence>();

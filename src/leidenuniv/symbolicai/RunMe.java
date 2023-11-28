@@ -20,6 +20,7 @@ public class RunMe {
 		//Create an agent
 		Agent a=new MyAgent();
 		a.HUMAN_DECISION=false;
+		a.DEBUG = true;
 		a.VERBOSE=true;
 		//Load the rules and static knowledge for the different steps in the agent cycle
 		a.loadKnowledgeBase("percepts", new File("data/percepts.txt"));
@@ -31,7 +32,7 @@ public class RunMe {
 //		a.loadKnowledgeBase("program", new File("data/family3.txt"));
 		
 		
-		Scanner io= new Scanner(System.in);
+		Scanner io = new Scanner(System.in);
 		
 //		// To test the .unifiesWith method
 //		Predicate p = a.programRules.rules().get(0).conclusions.get(0);

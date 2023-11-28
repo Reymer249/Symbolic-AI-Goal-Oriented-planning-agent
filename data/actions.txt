@@ -5,5 +5,5 @@
 #Add your action postcondition rules below:
 
 grab(X,K)>+hasKey(K)&-keyAt(K,X)
-open(X,K)>-lockedAt(K,X)
-goto(X,Y)>-at(X)&at(Y)
+open(X,K)>-lockedAt(K,X)&+opened(X,K)
+goto(X,Y)>-at(X)&+at(Y)
