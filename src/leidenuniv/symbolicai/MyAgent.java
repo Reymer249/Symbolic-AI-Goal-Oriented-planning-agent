@@ -151,7 +151,7 @@ public class MyAgent extends Agent {
 		}
 		else { // recursive case: we still have conditions to find substitutions
 			Predicate condition = conditions.lastElement();
-			if (condition.eql || condition.not || condition.neg) {
+			if (condition.eql || condition.not || condition.neg) { // base case, considering reserved predicates
 				boolean passed = false;
 				if (onlyReservedPredicatesLeft(conditions)) {
 					Predicate conditionSubst = new Predicate(condition.toString());
@@ -176,12 +176,9 @@ public class MyAgent extends Agent {
 					findAllSubstitions(allSubstitutions, substitution, conditions, facts);
 				}
 			}
-			else {
+			else { // base case, considering not reserved predicate
 				for (Predicate fact: facts.values()) {
 					HashMap<String, String> unification = unifiesWith(condition, fact);
-	//				System.out.println(condition);
-	//				System.out.println(fact);
-	//				System.out.println(unification);
 					if (unification != null && unionIsPossible(substitution, unification)) {
 						HashMap<String, String> newSubstitution = new HashMap<>(substitution);
 						newSubstitution.putAll(unification);
