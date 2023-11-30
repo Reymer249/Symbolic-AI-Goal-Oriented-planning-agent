@@ -36,7 +36,7 @@ public class KB {
 				}
 				line=r.readLine();
 			}
-			
+			r.close();
 		} catch (Exception e) {
 			System.out.println("Error reading KB "+file);
 			e.printStackTrace();

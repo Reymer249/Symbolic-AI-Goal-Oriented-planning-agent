@@ -96,6 +96,7 @@ public class Maze {
 				System.out.println("Error reading maze file:keys and locks dont match for following: "+ keycheck.toString());
 				System.exit(0);
 			}
+			r.close();
 		} catch (Exception e) {
 			System.out.println("Error reading maze file "+file);
 			e.printStackTrace();
